@@ -1,29 +1,33 @@
-// Create the widget
-function createWidget() {
-    let widget = document.createElement('div');
-    widget.setAttribute('style', 'border: 1px solid black; padding: 10px; background-color: lightgray; margin-bottom: 10px; width: 100%;');
-    widget.innerHTML = `
-        <label for="prompts">Number of Prompts: </label>
-        <input id="prompts" type="number" min="1" value="1" />
-        <br />
-        <label for="customMessage">Custom Message: </label>
-        <input id="customMessage" type="text" placeholder="Enter message" />
-        <br />
-        <button id="startAuto">Start Auto Prompts</button>
-    `;
-    
-    // Append widget above the text box container
-    let textBoxContainer = document.querySelector('textarea[data-element-id="chat-input-textbox"]');
-    if (textBoxContainer) {
-        textBoxContainer.parentNode.insertBefore(widget, textBoxContainer);
-    }
+// Function to create and inject the widget
+function createAndInjectWidget() {
+    let existingWidget = document.getElementById('auto-prompt-widget');
+    if (!existingWidget) {
+        let widget = document.createElement('div');
+        widget.setAttribute('id', 'auto-prompt-widget');
+        widget.setAttribute('style', 'border: 1px solid black; padding: 10px; background-color: lightgray; margin-bottom: 10px; width: 100%;');
+        widget.innerHTML = `
+            <label for="prompts">Number of Prompts: </label>
+            <input id="prompts" type="number" min="1" value="1" />
+            <br />
+            <label for="customMessage">Custom Message: </label>
+            <input id="customMessage" type="text" placeholder="Enter message" />
+            <br />
+            <button id="startAuto">Start Auto Prompts</button>
+        `;
+        
+        // Append widget above the text box container
+        let textBoxContainer = document.querySelector('textarea[data-element-id="chat-input-textbox"]');
+        if (textBoxContainer) {
+            textBoxContainer.parentNode.insertBefore(widget, textBoxContainer);
+        }
 
-    // Adding event listener to the button for starting automatic prompts
-    document.getElementById('startAuto').addEventListener('click', () => {
-        let prompts = document.getElementById('prompts').value;
-        let message = document.getElementById('customMessage').value;
-        startAutoPrompts(parseInt(prompts), message);
-    });
+        // Adding event listener to the button for starting automatic prompts
+        document.getElementById('startAuto').addEventListener('click', () => {
+            let prompts = document.getElementById('prompts').value;
+            let message = document.getElementById('customMessage').value;
+            startAutoPrompts(parseInt(prompts), message);
+        });
+    }
 }
 
 // Function to start automatic prompts
@@ -53,5 +57,17 @@ function startAutoPrompts(numberOfPrompts, customMessage) {
     }, 5000); // Check every 5 seconds
 }
 
-// Inject the widget
-createWidget();
+// Ensure the widget is injected on chat navigation or page load
+function ensureWidgetInjection() {
+    createAndInjectWidget();
+    const observer = new MutationObserver(() => {
+        createAndInjectWidget();
+    });
+    observer.observe(document.querySelector('[data-element-id="chat-space-background"]'), {
+        childList: true,
+        subtree: true
+    });
+}
+
+// Initial call to inject the widget
+ensureWidgetInjection();
