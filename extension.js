@@ -1,10 +1,11 @@
 // Function to create and inject the widget
 function createAndInjectWidget() {
     try {
+        console.log('Attempting to inject widget...');
         if (!document.getElementById('auto-prompt-widget')) {
             let widget = document.createElement('div');
             widget.setAttribute('id', 'auto-prompt-widget');
-            widget.setAttribute('style', 'border: 1px solid black; padding: 10px; background-color: lightgray; margin-bottom: 10px; width: 100%;');
+            widget.setAttribute('style', 'border: 1px solid black; padding: 10px; background-color: lightgray; margin-bottom: 10px; width: 100%; z-index: 1000;');
             widget.innerHTML = `
                 <label for="prompts">Number of Prompts: </label>
                 <input id="prompts" type="number" min="1" value="1" />
@@ -18,7 +19,10 @@ function createAndInjectWidget() {
             // Append widget above the text box container
             let textBoxContainer = document.querySelector('textarea[data-element-id="chat-input-textbox"]');
             if (textBoxContainer) {
+                console.log('Text box found. Injecting widget...');
                 textBoxContainer.parentNode.insertBefore(widget, textBoxContainer);
+            } else {
+                console.log('Text box not found.');
             }
 
             // Adding event listener to the button for starting automatic prompts
@@ -27,6 +31,8 @@ function createAndInjectWidget() {
                 let message = document.getElementById('customMessage').value;
                 startAutoPrompts(parseInt(prompts), message);
             });
+        } else {
+            console.log('Widget already exists.');
         }
     } catch (error) {
         console.error('Error while injecting the widget:', error);
@@ -36,6 +42,7 @@ function createAndInjectWidget() {
 // Function to start automatic prompts
 function startAutoPrompts(numberOfPrompts, customMessage) {
     try {
+        console.log('Starting auto prompts...');
         let count = 0;
         const interval = setInterval(() => {
             if (count >= numberOfPrompts) {
@@ -94,18 +101,24 @@ function ensureWidgetInjection() {
 // Function to create and inject the manual load button
 function createLoadWidgetButton() {
     try {
+        console.log('Attempting to inject load widget button...');
         if (!document.getElementById('load-widget-button')) {
             let button = document.createElement('button');
             button.setAttribute('id', 'load-widget-button');
             button.textContent = 'Load Widget';
-            button.setAttribute('style', 'margin: 10px; padding: 10px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer;');
+            button.setAttribute('style', 'margin: 10px; padding: 10px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer; z-index: 1000;');
             button.addEventListener('click', createAndInjectWidget);
 
             // Inject the button into the sidebar
             let sidebar = document.querySelector('[data-element-id="side-bar-background"]');
             if (sidebar) {
+                console.log('Sidebar found. Injecting load widget button...');
                 sidebar.appendChild(button);
+            } else {
+                console.log('Sidebar not found.');
             }
+        } else {
+            console.log('Load widget button already exists.');
         }
     } catch (error) {
         console.error('Error while injecting the load widget button:', error);
