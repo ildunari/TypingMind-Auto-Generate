@@ -91,5 +91,31 @@ function ensureWidgetInjection() {
     }
 }
 
+// Function to create and inject the manual load button
+function createLoadWidgetButton() {
+    try {
+        if (!document.getElementById('load-widget-button')) {
+            let button = document.createElement('button');
+            button.setAttribute('id', 'load-widget-button');
+            button.textContent = 'Load Widget';
+            button.setAttribute('style', 'margin: 10px; padding: 10px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer;');
+            button.addEventListener('click', createAndInjectWidget);
+
+            // Inject the button into the sidebar
+            let sidebar = document.querySelector('[data-element-id="side-bar-background"]');
+            if (sidebar) {
+                sidebar.appendChild(button);
+            }
+        }
+    } catch (error) {
+        console.error('Error while injecting the load widget button:', error);
+    }
+}
+
 // Initialize when the document is fully loaded
-window.addEventListener('load', ensureWidgetInjection);
+function initialize() {
+    ensureWidgetInjection();
+    createLoadWidgetButton();
+}
+
+window.addEventListener('load', initialize);
