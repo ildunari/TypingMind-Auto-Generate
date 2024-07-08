@@ -1,7 +1,7 @@
 // Function to create and inject the widget
 function createAndInjectWidget() {
-    let existingWidget = document.getElementById('auto-prompt-widget');
-    if (!existingWidget) {
+    // Check if the widget already exists
+    if (!document.getElementById('auto-prompt-widget')) {
         let widget = document.createElement('div');
         widget.setAttribute('id', 'auto-prompt-widget');
         widget.setAttribute('style', 'border: 1px solid black; padding: 10px; background-color: lightgray; margin-bottom: 10px; width: 100%;');
@@ -14,7 +14,7 @@ function createAndInjectWidget() {
             <br />
             <button id="startAuto">Start Auto Prompts</button>
         `;
-        
+
         // Append widget above the text box container
         let textBoxContainer = document.querySelector('textarea[data-element-id="chat-input-textbox"]');
         if (textBoxContainer) {
@@ -60,14 +60,21 @@ function startAutoPrompts(numberOfPrompts, customMessage) {
 // Ensure the widget is injected on chat navigation or page load
 function ensureWidgetInjection() {
     createAndInjectWidget();
+
+    // Observing for changes within the chat space
     const observer = new MutationObserver(() => {
         createAndInjectWidget();
     });
-    observer.observe(document.querySelector('[data-element-id="chat-space-background"]'), {
-        childList: true,
-        subtree: true
-    });
+    
+    // Observe the main chat space for changes
+    let chatSpace = document.querySelector('[data-element-id="chat-space-background"]');
+    if (chatSpace) {
+        observer.observe(chatSpace, {
+            childList: true,
+            subtree: true
+        });
+    }
 }
 
-// Initial call to inject the widget
-ensureWidgetInjection();
+// Initialize when the DOM content is fully loaded
+document.addEventListener('DOMContentLoaded', ensureWidgetInjection);
